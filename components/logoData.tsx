@@ -9,12 +9,12 @@ export const CUSTOM_LOGOS: LogoItem[] = [
     alt: "UpLearning Logo"
   },
   {
-    src: "Scan documents20260826_161919_page-0001.jpg",
+    src: "/Scan documents20260826_161919_page-0001.jpg",
     title: "Seyonix",
     alt: "Seyonix Logo"
   },
   {
-    src: "image.png",
+    src: "/image.png",
     title: "Vipra cube ai",
     alt: "Cognito Logo"
   },
