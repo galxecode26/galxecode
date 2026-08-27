@@ -20,7 +20,7 @@ const ELIGIBILITY_CHECKS = [
   },
   {
     key: "location",
-    value: "anywhere",
+    value: "2390-B - K. B. Hidayatullah Road, New Modikhana, Azam Campus, Camp, Pune.",
     desc: "Register online, build remotely, pitch live on demo day.",
   },
 ];
