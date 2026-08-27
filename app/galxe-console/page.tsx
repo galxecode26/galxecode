@@ -7,6 +7,7 @@ import {
   Copy,
   Download,
   ExternalLink,
+  Handshake,
   Loader2,
   LogOut,
   ScanLine,
@@ -17,6 +18,7 @@ import { supabase } from "@/lib/supabase";
 import LoginGate from "@/components/admin/LoginGate";
 import TeamDrawer from "@/components/admin/TeamDrawer";
 import QRScanner from "@/components/admin/QRScanner";
+import PartnerAdminModal from "@/components/admin/PartnerAdminModal";
 import {
   emptyMember,
   fmtDate,
@@ -51,6 +53,7 @@ export default function ConsolePage() {
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [shotUrl, setShotUrl] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [toast, setToast] = useState("");
 
   const showToast = useCallback((msg: string) => {
@@ -394,6 +397,14 @@ export default function ConsolePage() {
               <span className="hidden sm:inline">Scan QR</span>
             </button>
             <button
+              onClick={() => setShowPartnerModal(true)}
+              title="Manage Connected Partners"
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 text-xs text-purple-300 transition-colors hover:bg-purple-500/20 hover:text-purple-200"
+            >
+              <Handshake size={13} />
+              <span className="hidden sm:inline">Partners</span>
+            </button>
+            <button
               onClick={exportCsv}
               title="Export CSV"
               className="flex h-8 items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 text-xs text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-zinc-200"
@@ -711,6 +722,9 @@ export default function ConsolePage() {
 
       {/* QR Scanner */}
       {showScanner && <QRScanner onClose={() => setShowScanner(false)} />}
+
+      {/* Partner Admin Modal */}
+      {showPartnerModal && <PartnerAdminModal onClose={() => setShowPartnerModal(false)} />}
 
       {/* toast */}
       {toast && (

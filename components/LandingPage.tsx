@@ -16,6 +16,7 @@ import PrizesSection from "./PrizesSection";
 import FaqSection from "./FaqSection";
 import Footer from "./Footer";
 import RegisterForm from "./RegisterForm";
+import ConnectedPartners from "./ConnectedPartners";
 
 import { CUSTOM_LOGOS } from "./logoData";
 
@@ -46,6 +47,7 @@ const CARD_NAV_ITEMS = [
     links: [
       { label: "Timeline", ariaLabel: "Event timeline", href: "#timeline" },
       { label: "Prizes", ariaLabel: "Prizes and rewards", href: "#prizes" },
+      { label: "Partners", ariaLabel: "Connected partners", href: "#partners" },
       { label: "FAQs", ariaLabel: "Frequently asked questions", href: "#faqs" },
     ],
   },
@@ -198,6 +200,26 @@ export default function LandingPage() {
 
           <TypewriterHeadline />
 
+          <div className="organized-by-banner anim" style={{ "--d": "0.22s" } as React.CSSProperties}>
+            <a
+              href="https://drpaiu.edu.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="organized-by-pill cursor-pointer"
+              title="Visit Dr. P. A. Inamdar University Website"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/pa-inamdar-logo.png"
+                alt="Dr. P. A. Inamdar University Logo"
+                className="organized-by-logo"
+              />
+              <span className="organized-by-text">
+                Organised by <strong className="organized-by-highlight">Dr. P. A. Inamdar University</strong>
+              </span>
+            </a>
+          </div>
+
           <p className="subhead anim" style={{ "--d": "0.28s" } as React.CSSProperties}>
             The ultimate platform for builders to ideate, prototype, and ship AI-powered
             solutions that solve real-world problems.
@@ -291,6 +313,8 @@ export default function LandingPage() {
         <TimelineSection />
 
         <PrizesSection />
+
+        <ConnectedPartners />
 
         <FaqSection />
       </div>

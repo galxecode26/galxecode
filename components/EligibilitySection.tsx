@@ -20,7 +20,7 @@ const ELIGIBILITY_CHECKS = [
   },
   {
     key: "location",
-    value: "anywhere",
+    value: "",
     desc: "Register online, build remotely, pitch live on demo day.",
   },
 ];
