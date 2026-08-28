@@ -63,7 +63,19 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
       return next.slice(0, teamSize);
     });
   }, [teamSize]);
-
+useEffect(() => {
+  setMembers((prev) => {
+    if (prev.length === 0) return prev;
+    const updated = [...prev];
+    updated[0] = {
+      ...updated[0],
+      name: fullName,
+      email: email,
+      phone: phone,
+    };
+    return updated;
+  });
+}, [fullName, email, phone]);
   const memberFields = [
     { key: "name" as const, label: "Member Name", ph: "Full name" },
     { key: "email" as const, label: "Member Email", ph: "name@email.com", type: "email" },
@@ -171,7 +183,7 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
             })),
           },
         })
-        .catch(() => {});
+        .catch(() => { });
 
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -196,8 +208,7 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
   };
 
   const inputCls = (err?: string) =>
-    `w-full rounded-lg border bg-zinc-900/60 px-4 py-3 text-base text-white placeholder:text-zinc-600 outline-none transition-colors focus:border-purple-400 ${
-      err ? "border-rose-500/70" : "border-zinc-700/80"
+    `w-full rounded-lg border bg-zinc-900/60 px-4 py-3 text-base text-white placeholder:text-zinc-600 outline-none transition-colors focus:border-purple-400 ${err ? "border-rose-500/70" : "border-zinc-700/80"
     }`;
 
   const Err = ({ msg }: { msg?: string }) =>
@@ -227,7 +238,7 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
             className="inline-flex items-center gap-2 rounded-lg bg-[#25d366]/15 border border-[#25d366]/30 px-5 py-3 text-sm font-semibold text-[#25d366] transition-colors hover:bg-[#25d366]/25"
           >
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
             </svg>
             Join WhatsApp Group
           </a>
@@ -294,146 +305,146 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
       </div>
 
       {step === 1 && (
-      <form onSubmit={onNext} noValidate className="space-y-10 pb-4">
-        {/* Personal details */}
-        <fieldset>
-          <legend className="mb-5 text-sm font-semibold uppercase tracking-wider text-purple-300">
-            Personal Details
-          </legend>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div>
-              <Label>Full Name *</Label>
-              <input
-                className={inputCls(errors.fullName)}
-                placeholder="Your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-              <Err msg={errors.fullName} />
+        <form onSubmit={onNext} noValidate className="space-y-10 pb-4">
+          {/* Personal details */}
+          <fieldset>
+            <legend className="mb-5 text-sm font-semibold uppercase tracking-wider text-purple-300">
+              Personal Details
+            </legend>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <Label>Full Name *</Label>
+                <input
+                  className={inputCls(errors.fullName)}
+                  placeholder="Your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+                <Err msg={errors.fullName} />
+              </div>
+              <div>
+                <Label>Team Leader's Email Address *</Label>
+                <input
+                  type="email"
+                  className={inputCls(errors.email)}
+                  placeholder="you@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <Err msg={errors.email} />
+              </div>
+              <div>
+                <Label>Phone Number *</Label>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  className={inputCls(errors.phone)}
+                  placeholder="10-digit number"
+                  value={phone}
+                  onChange={(e) => setPhone(digitsOnly(e.target.value))}
+                />
+                <Err msg={errors.phone} />
+              </div>
+              <div>
+                <Label>Referral Person Name (if any)</Label>
+                <input
+                  className={inputCls()}
+                  placeholder="Referral person name"
+                  value={college}
+                  onChange={(e) => setCollege(e.target.value)}
+                />
+              </div>
             </div>
-            <div>
-              <Label>Email Address *</Label>
-              <input
-                type="email"
-                className={inputCls(errors.email)}
-                placeholder="you@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Err msg={errors.email} />
-            </div>
-            <div>
-              <Label>Phone Number *</Label>
-              <input
-                type="tel"
-                inputMode="numeric"
-                className={inputCls(errors.phone)}
-                placeholder="10-digit number"
-                value={phone}
-                onChange={(e) => setPhone(digitsOnly(e.target.value))}
-              />
-              <Err msg={errors.phone} />
-            </div>
-            <div>
-              <Label>Referral Person Name (if any)</Label>
-              <input
-                className={inputCls()}
-                placeholder="Referral person name"
-                value={college}
-                onChange={(e) => setCollege(e.target.value)}
-              />
-            </div>
-          </div>
-        </fieldset>
+          </fieldset>
 
-        {/* Team details */}
-        <fieldset>
-          <legend className="mb-5 text-sm font-semibold uppercase tracking-wider text-purple-300">
-            Team Details
-          </legend>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div>
-              <Label>Team Name *</Label>
-              <input
-                className={inputCls(errors.teamName)}
-                placeholder="e.g. Pixel Pirates"
-                value={teamName}
-                onChange={(e) => setTeamName(e.target.value)}
-              />
-              <Err msg={errors.teamName} />
+          {/* Team details */}
+          <fieldset>
+            <legend className="mb-5 text-sm font-semibold uppercase tracking-wider text-purple-300">
+              Team Details
+            </legend>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <Label>Team Name *</Label>
+                <input
+                  className={inputCls(errors.teamName)}
+                  placeholder="e.g. Pixel Pirates"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                />
+                <Err msg={errors.teamName} />
+              </div>
+              <div>
+                <Label>Number of Members * (₹{PRICE_PER_MEMBER}/person)</Label>
+                <select
+                  className={`${inputCls()} cursor-pointer`}
+                  value={teamSize}
+                  onChange={(e) => setTeamSize(Number(e.target.value))}
+                >
+                  {[1, 2, 3, 4].map((n) => (
+                    <option key={n} value={n} className="bg-zinc-900">
+                      {n} {n === 1 ? "member" : "members"} — ₹{n * PRICE_PER_MEMBER}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <Label>Number of Members * (₹{PRICE_PER_MEMBER}/person)</Label>
-              <select
-                className={`${inputCls()} cursor-pointer`}
-                value={teamSize}
-                onChange={(e) => setTeamSize(Number(e.target.value))}
-              >
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n} className="bg-zinc-900">
-                    {n} {n === 1 ? "member" : "members"} — ₹{n * PRICE_PER_MEMBER} (₹{PRICE_PER_MEMBER}/person)
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
 
-          <div className="mt-6 space-y-4">
-            {members.map((m, i) => (
-              <div
-                key={i}
-                className="rounded-lg border border-zinc-800 p-4"
-              >
-                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-500">
-                  Member {i + 1}
-                </p>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {memberFields.map((f) => {
-                    const errKey = `m${i}-${f.key}`;
-                    return (
-                      <div key={f.key}>
-                        <Label>{f.label}</Label>
-                        <input
-                          type={f.type ?? "text"}
-                          placeholder={f.ph}
-                          className={inputCls(errors[errKey])}
-                          value={
-                            f.key === "phone" ? digitsOnly(m[f.key]) : m[f.key]
-                          }
-                          onChange={(e) => {
-                            const raw = e.target.value;
-                            setMembers((prev) =>
-                              prev.map((mm, j) =>
-                                j === i
-                                  ? {
+            <div className="mt-6 space-y-4">
+              {members.map((m, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border border-zinc-800 p-4"
+                >
+                  <p className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    Member {i + 1}
+                  </p>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {memberFields.map((f) => {
+                      const errKey = `m${i}-${f.key}`;
+                      return (
+                        <div key={f.key}>
+                          <Label>{f.label}</Label>
+                          <input
+                            type={f.type ?? "text"}
+                            placeholder={f.ph}
+                            className={inputCls(errors[errKey])}
+                            value={
+                              f.key === "phone" ? digitsOnly(m[f.key]) : m[f.key]
+                            }
+                            onChange={(e) => {
+                              const raw = e.target.value;
+                              setMembers((prev) =>
+                                prev.map((mm, j) =>
+                                  j === i
+                                    ? {
                                       ...mm,
                                       [f.key]:
                                         f.key === "phone"
                                           ? digitsOnly(raw)
                                           : raw,
                                     }
-                                  : mm
-                              )
-                            );
-                          }}
-                        />
-                        <Err msg={errors[errKey]} />
-                      </div>
-                    );
-                  })}
+                                    : mm
+                                )
+                              );
+                            }}
+                          />
+                          <Err msg={errors[errKey]} />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </fieldset>
+              ))}
+            </div>
+          </fieldset>
 
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-purple-600 py-3.5 font-semibold text-white transition-colors hover:bg-purple-500"
-        >
-          Next →
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-purple-600 py-3.5 font-semibold text-white transition-colors hover:bg-purple-500"
+          >
+            Next →
+          </button>
+        </form>
       )}
 
       {step === 2 && (() => {
@@ -473,88 +484,87 @@ export default function RegisterForm({ onClose }: { onClose?: () => void }) {
                 </p>
               </div>
 
-            <div className="mt-8 space-y-5">
-              <div>
-                <Label>Payment Screenshot *</Label>
-                <label
-                  htmlFor="payment-screenshot"
-                  className={`mt-1.5 flex cursor-pointer items-center gap-4 rounded-lg border border-dashed px-4 py-4 transition-colors hover:border-purple-400 ${
-                    errors.screenshot ? "border-rose-500/70" : "border-zinc-700/80"
-                  }`}
-                >
-                  {previewUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={previewUrl}
-                      alt="Payment proof preview"
-                      className="h-14 w-14 shrink-0 rounded-md object-cover"
-                    />
-                  ) : (
-                    <ImageUp size={22} className="shrink-0 text-zinc-500" />
-                  )}
-                  <span className="min-w-0 flex-1 truncate text-sm text-zinc-300">
-                    {screenshot ? screenshot.name : "Upload payment screenshot"}
-                  </span>
-                  <span className="shrink-0 text-xs font-medium text-purple-300">
-                    {screenshot ? "Change" : "Browse"}
-                  </span>
-                </label>
-                <input
-                  id="payment-screenshot"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={onFileChange}
-                />
-                <Err msg={errors.screenshot} />
+              <div className="mt-8 space-y-5">
+                <div>
+                  <Label>Payment Screenshot *</Label>
+                  <label
+                    htmlFor="payment-screenshot"
+                    className={`mt-1.5 flex cursor-pointer items-center gap-4 rounded-lg border border-dashed px-4 py-4 transition-colors hover:border-purple-400 ${errors.screenshot ? "border-rose-500/70" : "border-zinc-700/80"
+                      }`}
+                  >
+                    {previewUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={previewUrl}
+                        alt="Payment proof preview"
+                        className="h-14 w-14 shrink-0 rounded-md object-cover"
+                      />
+                    ) : (
+                      <ImageUp size={22} className="shrink-0 text-zinc-500" />
+                    )}
+                    <span className="min-w-0 flex-1 truncate text-sm text-zinc-300">
+                      {screenshot ? screenshot.name : "Upload payment screenshot"}
+                    </span>
+                    <span className="shrink-0 text-xs font-medium text-purple-300">
+                      {screenshot ? "Change" : "Browse"}
+                    </span>
+                  </label>
+                  <input
+                    id="payment-screenshot"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={onFileChange}
+                  />
+                  <Err msg={errors.screenshot} />
+                </div>
+
+                <div>
+                  <Label>UTR / Transaction ID *</Label>
+                  <input
+                    className={inputCls(errors.txnId)}
+                    placeholder="e.g. 402512345678 (from your UPI app)"
+                    value={txnId}
+                    onChange={(e) => setTxnId(e.target.value.toUpperCase())}
+                  />
+                  <Err msg={errors.txnId} />
+                </div>
               </div>
+            </fieldset>
 
-              <div>
-                <Label>UTR / Transaction ID *</Label>
-                <input
-                  className={inputCls(errors.txnId)}
-                  placeholder="e.g. 402512345678 (from your UPI app)"
-                  value={txnId}
-                  onChange={(e) => setTxnId(e.target.value.toUpperCase())}
-                />
-                <Err msg={errors.txnId} />
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                disabled={submitting}
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 px-6 py-3.5 font-semibold text-zinc-300 transition-colors hover:border-purple-400 hover:text-white disabled:opacity-50"
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex-1 rounded-lg bg-purple-600 py-3.5 font-semibold text-white transition-colors hover:bg-purple-500 disabled:opacity-60"
+              >
+                {submitting ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Loader2 size={18} className="animate-spin" /> Submitting…
+                  </span>
+                ) : (
+                  "Submit Registration"
+                )}
+              </button>
+            </div>
+
+            {submitError && (
+              <div className="flex items-start gap-3 rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+                <XCircle size={18} className="mt-0.5 shrink-0" />
+                <span>{submitError}</span>
               </div>
-            </div>
-          </fieldset>
-
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 px-6 py-3.5 font-semibold text-zinc-300 transition-colors hover:border-purple-400 hover:text-white disabled:opacity-50"
-            >
-              <ArrowLeft size={16} /> Back
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 rounded-lg bg-purple-600 py-3.5 font-semibold text-white transition-colors hover:bg-purple-500 disabled:opacity-60"
-            >
-              {submitting ? (
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Loader2 size={18} className="animate-spin" /> Submitting…
-                </span>
-              ) : (
-                "Submit Registration"
-              )}
-            </button>
-          </div>
-
-          {submitError && (
-            <div className="flex items-start gap-3 rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-              <XCircle size={18} className="mt-0.5 shrink-0" />
-              <span>{submitError}</span>
-            </div>
-          )}
-        </form>
-      );
-    })()}
+            )}
+          </form>
+        );
+      })()}
     </div>
   );
 }
