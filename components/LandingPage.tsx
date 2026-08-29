@@ -17,6 +17,8 @@ import FaqSection from "./FaqSection";
 import Footer from "./Footer";
 import RegisterForm from "./RegisterForm";
 import ConnectedPartners from "./ConnectedPartners";
+import JudgingRoadmapSection from "./JudgingRoadmapSection";
+import VolunteerSection from "./VolunteerSection";
 
 import { CUSTOM_LOGOS } from "./logoData";
 
@@ -46,8 +48,10 @@ const CARD_NAV_ITEMS = [
     textColor: "#fff",
     links: [
       { label: "Timeline", ariaLabel: "Event timeline", href: "#timeline" },
+      { label: "Judging & Roadmap", ariaLabel: "Judging criteria and roadmap", href: "#judging" },
       { label: "Prizes", ariaLabel: "Prizes and rewards", href: "#prizes" },
       { label: "Partners", ariaLabel: "Connected partners", href: "#partners" },
+      { label: "Volunteers", ariaLabel: "Volunteer crew application", href: "#volunteer" },
       { label: "FAQs", ariaLabel: "Frequently asked questions", href: "#faqs" },
     ],
   },
@@ -311,10 +315,14 @@ export default function LandingPage() {
         <WhyParticipate />
 
         <TimelineSection />
+ 
+        <JudgingRoadmapSection />
 
         <PrizesSection />
 
         <ConnectedPartners />
+
+        <VolunteerSection />
 
         <FaqSection />
       </div>

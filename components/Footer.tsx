@@ -10,14 +10,16 @@ const NAV_LINKS = [
   { label: "Eligibility", target: ".eligibility-section" },
   { label: "Why Us", target: ".why-section" },
   { label: "Timeline", target: ".timeline-section" },
+  { label: "Judging & Roadmap", target: ".judging-section" },
   { label: "Prizes", target: ".prizes-section" },
+  { label: "Volunteers", target: ".volunteer-section" },
   { label: "FAQs", target: ".faq-section" },
 ];
 
 const SOCIALS = [
-  { icon: SiInstagram, label: "Instagram" },
-  { icon: FaLinkedinIn, label: "LinkedIn" },
-  { icon: SiX, label: "X" },
+  { icon: SiInstagram, label: "Instagram", link: "https://www.instagram.com/galxecode/" },
+  { icon: FaLinkedinIn, label: "LinkedIn", link: "https://www.linkedin.com/company/galxecode" },
+  { icon: SiX, label: "X", link: "https://x.com/galxecode" },
 ];
 
 export default function Footer({ onRegister }: { onRegister?: () => void }) {
@@ -67,15 +69,18 @@ export default function Footer({ onRegister }: { onRegister?: () => void }) {
               </button>
             ))}
           </div>
-            <button
-              className="ft2-register"
-              onClick={onRegister}
-              type="button"
-            >
-              Register Now
-              <ArrowUpRight size={18} />
-            </button>
-        </nav>
+            </nav>
+            <section className="ft2-register-section ft2-reveal">
+              <h3 className="ft2-register-title">Ready to compete?</h3>
+              <button
+                className="ft2-register"
+                onClick={onRegister}
+                type="button"
+              >
+                Register Now
+                <ArrowUpRight size={18} />
+              </button>
+            </section>
 
         {/* contact + socials */}
         <div className="ft2-row ft2-reveal">
@@ -97,7 +102,7 @@ export default function Footer({ onRegister }: { onRegister?: () => void }) {
               <span>Join Group</span>
             </a>
             {SOCIALS.map((s) => (
-              <a key={s.label} aria-label={s.label} href="#" className="ft2-soc">
+              <a key={s.label} aria-label={s.label} href={s.link} className="ft2-soc">
                 <s.icon size={16} />
               </a>
             ))}

@@ -103,6 +103,8 @@ export default function FaqSection() {
       </div>
 
       <FaqAccordion />
+      {/* Volunteer Section */}
+
     </section>
   );
 }

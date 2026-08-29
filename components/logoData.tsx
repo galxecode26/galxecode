@@ -18,5 +18,10 @@ export const CUSTOM_LOGOS: LogoItem[] = [
     title: "Vipra cube ai",
     alt: "Cognito Logo"
   },
+  {
+    src: "/webwrite.png",
+    title: "Webwrite Services",
+    alt: "Webwrite Logo"
+  },
 
 ];
