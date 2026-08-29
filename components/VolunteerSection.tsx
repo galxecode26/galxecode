@@ -225,7 +225,7 @@ export default function VolunteerSection() {
               Ready to help us build GalxeCode &apos;26?
             </h4>
             <p className="text-xs sm:text-sm text-zinc-300">
-              Fill out the Google Form to lock in your spot!
+              Join our team and contribute to making GalxeCode 2026 a memorable event!
             </p>
           </div>
 
