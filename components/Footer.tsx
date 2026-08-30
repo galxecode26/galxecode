@@ -115,7 +115,7 @@ export default function Footer({ onRegister }: { onRegister?: () => void }) {
         {/* meta */}
         <div className="ft2-meta ft2-reveal">
           <span>© 2026 GalxeCode — All rights reserved</span>
-          <span>Made in Pune, with AI</span>
+          <span>Developed and Secured by Webwrite Services.</span>
           <button
             aria-label="Back to top"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
