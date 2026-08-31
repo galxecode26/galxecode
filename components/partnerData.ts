@@ -33,6 +33,15 @@ export const INITIAL_PARTNERS: ConnectedPartner[] = [
   },
   {
     id: "partner-2",
+    name: "Webwrite Services",
+    role: "Title Partner",
+    logoSrc: "/webwrite.png",
+    websiteUrl: "https://webwrite.co.in",
+    badgeColor: "blue",
+    description: "Converting Ideas into Reality.",
+  },
+  {
+    id: "partner-3",
     name: "Seyonix",
     role: "Technology Partner",
     logoSrc: "/Scan documents20260826_161919_page-0001.jpg",
@@ -40,7 +49,7 @@ export const INITIAL_PARTNERS: ConnectedPartner[] = [
     description: "Pioneering technological solutions and innovative software engineering.",
   },
   {
-    id: "partner-3",
+    id: "partner-4",
     name: "Vipra Cube AI",
     role: "AI & Innovation Partner",
     logoSrc: "/image.png",
@@ -48,7 +57,7 @@ export const INITIAL_PARTNERS: ConnectedPartner[] = [
     description: "Accelerating AI-driven transformation and smart product intelligence.",
   },
   {
-    id: "partner-4",
+    id: "partner-5",
     name: "P. A. Inamdar University",
     role: "Academic Partner",
     logoSrc: "/pa-inamdar-logo.png",
