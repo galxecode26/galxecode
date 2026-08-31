@@ -34,7 +34,7 @@ export const INITIAL_PARTNERS: ConnectedPartner[] = [
   {
     id: "partner-2",
     name: "Webwrite Services",
-    role: "Title Partner",
+    role: "Co-Technology Partner",
     logoSrc: "/webwrite.png",
     websiteUrl: "https://webwrite.co.in",
     badgeColor: "blue",
