@@ -65,4 +65,13 @@ export const INITIAL_PARTNERS: ConnectedPartner[] = [
     badgeColor: "cyan",
     description: "Leading higher education excellence, innovation & campus hosting.",
   },
+  {
+    id: "partner-6",
+    name: "Voinex",
+    role: "Platform Credit  Partner",
+    logoSrc: "/voinex-logo.jpeg",
+    websiteUrl: "https://voinex.in",
+    badgeColor: "amber",
+    description: "Let AI Connect with Hardware. Build Easier and Faster.",
+  },
 ];
