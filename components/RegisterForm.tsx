@@ -380,7 +380,7 @@ useEffect(() => {
                   value={teamSize}
                   onChange={(e) => setTeamSize(Number(e.target.value))}
                 >
-                  {[1, 2, 3, 4,5].map((n) => (
+                  {[ 2, 3, 4,5].map((n) => (
                     <option key={n} value={n} className="bg-zinc-900">
                       {n} {n === 1 ? "member" : "members"} — ₹{n * PRICE_PER_MEMBER}
                     </option>
