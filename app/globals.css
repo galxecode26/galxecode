@@ -2380,6 +2380,10 @@ img {
   color: #86efac;
 }
 
+.ft2-live.ft2-closed {
+  color: #fda4af;
+}
+
 .ft2-live i {
   width: 7px;
   height: 7px;
@@ -2387,6 +2391,11 @@ img {
   background: #22c55e;
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
   animation: ft2-pulse 1.8s ease-in-out infinite;
+}
+
+.ft2-live.ft2-closed i {
+  background: #f43f5e;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.9);
 }
 
 @keyframes ft2-pulse {

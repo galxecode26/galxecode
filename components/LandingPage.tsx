@@ -14,8 +14,9 @@ import WhyParticipate from "./WhyParticipate";
 import TimelineSection from "./TimelineSection";
 import PrizesSection from "./PrizesSection";
 import FaqSection from "./FaqSection";
+import { SiWhatsapp } from "react-icons/si";
 import Footer from "./Footer";
-import RegisterForm from "./RegisterForm";
+import RegistrationClosed from "./RegistrationClosed";
 import ConnectedPartners from "./ConnectedPartners";
 import JudgingRoadmapSection from "./JudgingRoadmapSection";
 import VolunteerSection from "./VolunteerSection";
@@ -233,12 +234,12 @@ export default function LandingPage() {
             <SpecularButton
               size="lg"
               radius={999}
-              tint="#e879f9"
-              tintOpacity={0.4}
+              tint="#f43f5e"
+              tintOpacity={0.35}
               blur={10}
               textColor="#ffffff"
-              lineColor="#c084fc"
-              baseColor="#9333ea"
+              lineColor="#fb7185"
+              baseColor="#881337"
               intensity={0.9}
               shineSize={12}
               shineFade={50}
@@ -250,29 +251,29 @@ export default function LandingPage() {
               onClick={openRegister}
             >
               <Rocket size={18} style={{ marginRight: 8, verticalAlign: "middle" }} />
-              Join GalxeCode '26
+              Registrations Closed
             </SpecularButton>
             <SpecularButton
               size="lg"
               radius={999}
-              tint="#ffffff"
-              tintOpacity={0}
-              blur={0}
-              textColor="#d1d5db"
-              lineColor="#9333ea"
-              baseColor="#3b0764"
-              intensity={0.8}
-              shineSize={10}
+              tint="#25d366"
+              tintOpacity={0.25}
+              blur={10}
+              textColor="#ffffff"
+              lineColor="#22c55e"
+              baseColor="#064e3b"
+              intensity={0.85}
+              shineSize={12}
               shineFade={40}
-              thickness={1}
+              thickness={1.5}
               speed={0.35}
               followMouse
               proximity={250}
               autoAnimate={false}
               onClick={() => window.open('https://chat.whatsapp.com/JDxspXbRlezKQXm1n5so2S?s=cl&p=a&mlu=4', '_blank')}
             >
-              Join Group
-              <ArrowRight size={18} style={{ marginLeft: 8, verticalAlign: "middle" }} />
+              <SiWhatsapp size={18} style={{ marginRight: 8, verticalAlign: "middle" }} />
+              Join WhatsApp Group
             </SpecularButton>
           </div>
         </main>
@@ -349,7 +350,7 @@ export default function LandingPage() {
                   <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
                   <span className="h-3 w-3 rounded-full bg-[#28c840]" />
                   <span className="ml-3 font-mono text-xs text-zinc-400">
-                    galxe@code — registration
+                    galxe@code — registrations closed
                   </span>
                   <button
                     onClick={closeRegister}
@@ -360,9 +361,9 @@ export default function LandingPage() {
                   </button>
                 </div>
 
-                {/* scrollable form */}
+                {/* scrollable content */}
                 <div className="no-scrollbar overflow-y-auto overscroll-contain min-h-0 flex-1 px-5 py-5 pb-8 sm:px-9 sm:py-8">
-                  <RegisterForm onClose={closeRegister} />
+                  <RegistrationClosed isModal onClose={closeRegister} />
                 </div>
               </div>
             </div>

@@ -52,8 +52,8 @@ export default function Footer({ onRegister }: { onRegister?: () => void }) {
       {/* status strip */}
       <div className="ft2-strip ft2-reveal">
         <span>{"//"} END_OF_TRANSMISSION</span>
-        <span className="ft2-live">
-          <i /> REGISTRATIONS OPEN
+        <span className="ft2-live ft2-closed">
+          <i /> REGISTRATIONS CLOSED
         </span>
         <span className="ft2-ver">GALXECODE v26.0</span>
       </div>
@@ -71,13 +71,13 @@ export default function Footer({ onRegister }: { onRegister?: () => void }) {
           </div>
             </nav>
             <section className="ft2-register-section ft2-reveal">
-              <h3 className="ft2-register-title">Ready to compete?</h3>
+              <h3 className="ft2-register-title">Next hackathon coming soon!</h3>
               <button
                 className="ft2-register"
                 onClick={onRegister}
                 type="button"
               >
-                Register Now
+                Join Community
                 <ArrowUpRight size={18} />
               </button>
             </section>

@@ -23,5 +23,10 @@ export const CUSTOM_LOGOS: LogoItem[] = [
     title: "Webwrite Services",
     alt: "Webwrite Logo"
   },
+  {
+    src: "/voinex-logo.jpeg",
+    title: "Voinex Technologies",
+    alt: "Voinex Technologies Logo"
+  },
 
 ];
