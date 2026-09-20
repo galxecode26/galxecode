@@ -7,8 +7,9 @@ const corsHeaders = {
 
 const subject = "Your GALXECODE '26 Participation Certificate";
 const templateUrl = Deno.env.get("CERTIFICATE_TEMPLATE_URL");
-const resendApiKey = Deno.env.get("RESEND_API_KEY");
-const fromAddress = Deno.env.get("MAIL_FROM") ?? "Team GALXECODE '26 <noreply@galxecode.in>";
+const brevoApiKey = Deno.env.get("brevo_api_key");
+const senderEmail = Deno.env.get("brevo_sender_email");
+const senderName = Deno.env.get("brevo_sender_name") ?? "Team GALXECODE '26";
 
 type Member = { name: string; email: string };
 type Team = {
@@ -50,6 +51,15 @@ const emailHtml = (name: string) => `
   <p>Warm regards,<br><strong>Team GALXECODE '26</strong><br>AI Vibe Coding Hackathon<br>Presented by <strong>UpLearning</strong><br>In Collaboration with <strong>PNNMDA College</strong></p>
 `;
 
+const toBase64 = (value: string) => {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (let index = 0; index < bytes.length; index += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+  }
+  return btoa(binary);
+};
+
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -59,7 +69,7 @@ const json = (body: unknown, status = 200) =>
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!templateUrl || !resendApiKey) {
+  if (!templateUrl || !brevoApiKey || !senderEmail) {
     return json({ error: "Certificate email service is not configured" }, 503);
   }
 
@@ -99,33 +109,41 @@ Deno.serve(async (request) => {
   const results = await Promise.all(
     recipients.map(async (recipient) => {
       const certificate = certificateFor(template, recipient.name);
-      const response = await fetch("https://api.resend.com/emails", {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${resendApiKey}`,
+          "api-key": brevoApiKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: fromAddress,
-          to: [recipient.email.trim().toLowerCase()],
+          sender: { email: senderEmail, name: senderName },
+          to: [{ email: recipient.email.trim().toLowerCase(), name: recipient.name }],
           subject,
           html: emailHtml(recipient.name),
           attachments: [
             {
               filename: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.svg`,
-              content: btoa(unescape(encodeURIComponent(certificate))),
-              content_type: "image/svg+xml",
+              content: toBase64(certificate),
             },
           ],
         }),
       });
-      return { ok: response.ok, email: recipient.email };
+      const responseBody = await response.text();
+      return {
+        ok: response.ok,
+        email: recipient.email,
+        error: response.ok ? undefined : responseBody.slice(0, 300),
+      };
     })
   );
 
   const failed = results.filter((result) => !result.ok);
   if (failed.length > 0) {
-    return json({ error: `Failed to send ${failed.length} certificate email(s)`, sent: results.length - failed.length }, 502);
+    return json({
+      error: `Failed to send ${failed.length} certificate email(s)`,
+      details: failed.map((result) => result.error),
+      sent: results.length - failed.length,
+    }, 502);
   }
   return json({ sent: results.length, team_id: team.id });
 });
