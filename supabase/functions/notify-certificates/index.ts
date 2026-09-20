@@ -58,6 +58,13 @@ const createCertificatePdf = async (template: Uint8Array, participantName: strin
   const image = await pdf.embedPng(template);
   const page = pdf.addPage([566, 400]);
   page.drawImage(image, { x: 0, y: 0, width: 566, height: 400 });
+  page.drawRectangle({
+    x: 145,
+    y: 236,
+    width: 320,
+    height: 42,
+    color: rgb(1, 1, 1),
+  });
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
   const fontSize = 25;
   const textWidth = font.widthOfTextAtSize(name, fontSize);
