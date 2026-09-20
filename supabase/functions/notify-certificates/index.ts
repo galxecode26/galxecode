@@ -1,11 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { PDFDocument, rgb, StandardFonts } from "https://esm.sh/pdf-lib@1.17.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const subject = "Your GALXECODE '26 Participation Certificate";
+const subject = "GalxeCode'26 Participation Certificate";
 const templateUrl = Deno.env.get("CERTIFICATE_TEMPLATE_URL");
 const brevoApiKey = Deno.env.get("brevo_api_key");
 const senderEmail = Deno.env.get("brevo_sender_email");
@@ -29,35 +30,52 @@ const escapeXml = (value: string) =>
       ] ?? character
   );
 
-const certificateFor = (template: string, participantName: string) => {
-  const safeName = escapeXml(participantName.trim());
-  const overlay = `
-    <rect x="105" y="145" width="365" height="50" fill="#ffffff"/>
-    <text x="107" y="180" fill="#111111" font-family="Arial, Helvetica, sans-serif"
-      font-size="24" font-weight="700" textLength="350" lengthAdjust="spacingAndGlyphs">${safeName}</text>
-  `;
-  return template.replace("</svg>", `${overlay}</svg>`);
-};
-
 const emailHtml = (name: string) => `
-  <p>Dear ${escapeXml(name)},</p>
-  <p>Greetings from the <strong>GALXECODE '26 – AI Vibe Coding Hackathon</strong> team!</p>
-  <p>We sincerely thank you for participating in <strong>GALXECODE '26</strong> and being a part of this exciting journey of innovation, creativity, and technology.</p>
-  <p>Your enthusiasm, participation, and contribution made the hackathon a memorable experience. We truly appreciate your efforts and spirit of innovation throughout the event.</p>
-  <p>Please find your <strong>Participation Certificate attached to this email</strong> as a token of appreciation for your participation in <strong>GALXECODE '26 – AI Vibe Coding Hackathon</strong>.</p>
-  <p>We hope this experience encouraged you to explore new technologies, experiment with AI-powered development, and continue building innovative solutions.</p>
-  <p>Thank you once again for being a part of <strong>GALXECODE '26</strong>.</p>
-  <p><strong>Keep Building. Keep Innovating. Keep Vibe Coding! 🚀</strong></p>
-  <p>Warm regards,<br><strong>Team GALXECODE '26</strong><br>AI Vibe Coding Hackathon<br>Presented by <strong>UpLearning</strong><br>In Collaboration with <strong>PNNMDA College</strong></p>
+  <p>Hello ${escapeXml(name)},</p>
+  <p>Thank you for being part of <strong>GalxeCode'26</strong> and for the effort you and your team put in on 7th September.</p>
+  <p>We received a strong pool of teams, and after judging, your team did not advance to the next stage. That does not take away from what you built in a single day, with a problem statement revealed on the spot and the clock running. That is not easy, and you showed up and delivered.</p>
+  <p>Your Certificate of Participation is attached to this email.</p>
+  <p>What we would like you to take from this:</p>
+  <ul>
+    <li>Ideating, building and pitching under pressure is a skill few students practise. You now have that experience.</li>
+    <li>The team you worked with is a network worth keeping.</li>
+    <li>The next hackathon is a fresh start. Bring what you learned here.</li>
+  </ul>
+  <p>Thank you once again for making <strong>GalxeCode'26</strong> what it was.</p>
+  <p>Warm regards,<br><strong>Team GalxeCode'26</strong><br><a href="mailto:contact@galxecode.in">contact@galxecode.in</a></p>
 `;
 
-const toBase64 = (value: string) => {
-  const bytes = new TextEncoder().encode(value);
+const toBase64 = (bytes: Uint8Array) => {
   let binary = "";
   for (let index = 0; index < bytes.length; index += 0x8000) {
     binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
   }
   return btoa(binary);
+};
+
+const createCertificatePdf = async (background: Uint8Array, participantName: string) => {
+  const pdf = await PDFDocument.create();
+  const page = pdf.addPage([566, 400]);
+  const image = await pdf.embedPng(background);
+  page.drawImage(image, { x: 0, y: 0, width: 566, height: 400 });
+
+  const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const name = participantName.trim();
+  const fontSize = name.length > 28 ? 19 : 24;
+  const textWidth = font.widthOfTextAtSize(name, fontSize);
+  const width = Math.min(textWidth, 350);
+  page.drawRectangle({ x: 105, y: 205, width: 365, height: 50, color: rgb(1, 1, 1) });
+  page.drawText(name, {
+    x: 107,
+    y: 220,
+    size: fontSize,
+    maxWidth: 350,
+    font,
+    color: rgb(0.07, 0.07, 0.07),
+    characterSpacing: width < 350 ? 0 : -0.2,
+  });
+
+  return pdf.save();
 };
 
 const json = (body: unknown, status = 200) =>
@@ -94,9 +112,9 @@ Deno.serve(async (request) => {
   if (!team) return json({ error: "Team not found" }, 404);
 
   const templateResponse = await fetch(templateUrl);
-  if (!templateResponse.ok) return json({ error: "Certificate template could not be loaded" }, 502);
-  const template = await templateResponse.text();
-  if (!template.includes("</svg>")) return json({ error: "Certificate template is invalid" }, 500);
+  if (!templateResponse.ok) return json({ error: "Certificate background could not be loaded" }, 502);
+  const template = new Uint8Array(await templateResponse.arrayBuffer());
+  if (template.length === 0) return json({ error: "Certificate background is empty" }, 500);
 
   const recipients = [
     { name: team.leader_name, email: team.leader_email },
@@ -108,7 +126,7 @@ Deno.serve(async (request) => {
 
   const results = await Promise.all(
     recipients.map(async (recipient) => {
-      const certificate = certificateFor(template, recipient.name);
+      const certificate = await createCertificatePdf(template, recipient.name);
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
@@ -120,9 +138,9 @@ Deno.serve(async (request) => {
           to: [{ email: recipient.email.trim().toLowerCase(), name: recipient.name }],
           subject,
           htmlContent: emailHtml(recipient.name),
-          attachments: [
+          attachment: [
             {
-              filename: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.svg`,
+              name: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.pdf`,
               content: toBase64(certificate),
             },
           ],
