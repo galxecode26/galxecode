@@ -12,6 +12,7 @@ import {
   LogOut,
   ScanLine,
   Search,
+  Send,
   X,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -55,6 +56,7 @@ export default function ConsolePage() {
   const [showScanner, setShowScanner] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const [toast, setToast] = useState("");
+  const [certificateTeamId, setCertificateTeamId] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -185,6 +187,23 @@ export default function ConsolePage() {
     supabase.functions
       .invoke("notify-approval", { body: { team_id: teamId } })
       .catch(() => {});
+  };
+
+  const sendCertificates = async (team: Team) => {
+    setCertificateTeamId(team.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("notify-certificates", {
+        body: { team_id: team.id },
+      });
+      if (error) throw error;
+      const sent = typeof data?.sent === "number" ? data.sent : team.members.length;
+      showToast(`Certificates sent to ${sent} participant${sent === 1 ? "" : "s"}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Certificate email failed";
+      showToast(message);
+    } finally {
+      setCertificateTeamId(null);
+    }
   };
 
   const saveEdit = async () => {
@@ -532,7 +551,25 @@ export default function ConsolePage() {
                       </td>
                       {/* team */}
                       <td className="py-4 pr-5">
-                        <p className="text-[15.5px] font-medium text-zinc-100">{t.team_name}</p>
+                        <div className="flex items-center gap-3">
+                          <p className="text-[15.5px] font-medium text-zinc-100">{t.team_name}</p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void sendCertificates(t);
+                            }}
+                            disabled={certificateTeamId !== null}
+                            title={`Send participation certificates to ${t.team_name}`}
+                            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-violet-400/20 bg-violet-400/[0.08] px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-violet-200 transition-colors hover:bg-violet-400/[0.16] disabled:cursor-wait disabled:opacity-50"
+                          >
+                            {certificateTeamId === t.id ? (
+                              <Loader2 size={11} className="animate-spin" />
+                            ) : (
+                              <Send size={11} />
+                            )}
+                            <span>Send certificate</span>
+                          </button>
+                        </div>
                         <p className="mt-1 truncate text-xs text-zinc-600">
                           {t.leader_name} · {t.college || "—"}
                         </p>
