@@ -54,7 +54,13 @@ const toBase64 = (bytes: Uint8Array) => {
 };
 
 const createCertificatePdf = async (template: Uint8Array, participantName: string) => {
-  const pdf = await PDFDocument.load(template);
+  let pdf: PDFDocument;
+  try {
+    pdf = await PDFDocument.load(template);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Certificate PDF could not be parsed: ${message.slice(0, 240)}`);
+  }
   const page = pdf.getPages()[0];
   if (!page) throw new Error("Certificate PDF has no pages");
   const { width, height } = page.getSize();
@@ -117,6 +123,13 @@ Deno.serve(async (request) => {
   if (!templateResponse.ok) return json({ error: "Certificate PDF template could not be loaded" }, 502);
   const template = new Uint8Array(await templateResponse.arrayBuffer());
   if (template.length === 0) return json({ error: "Certificate PDF template is empty" }, 500);
+  const header = new TextDecoder().decode(template.slice(0, 5));
+  if (header !== "%PDF-") {
+    return json({
+      error: "Certificate PDF URL did not return a PDF",
+      content_type: templateResponse.headers.get("content-type"),
+    }, 502);
+  }
 
   const recipients = [
     { name: team.leader_name, email: team.leader_email },
