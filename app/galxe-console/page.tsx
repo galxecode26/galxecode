@@ -196,7 +196,13 @@ export default function ConsolePage() {
         body: { team_id: team.id },
       });
       if (error) throw error;
-      const sent = typeof data?.sent === "number" ? data.sent : team.members.length;
+      if (typeof data?.sent !== "number") {
+        throw new Error(data?.error ?? "Certificate function returned an invalid response");
+      }
+      const sent = data.sent;
+      if (sent < 1) {
+        throw new Error(data?.error ?? "No certificate emails were accepted by Brevo");
+      }
       showToast(`Certificates sent to ${sent} participant${sent === 1 ? "" : "s"}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Certificate email failed";

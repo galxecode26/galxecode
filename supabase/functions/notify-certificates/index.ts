@@ -129,10 +129,23 @@ Deno.serve(async (request) => {
         }),
       });
       const responseBody = await response.text();
+      let providerResult: { messageId?: string; messageIds?: string[]; message?: string } = {};
+      try {
+        providerResult = JSON.parse(responseBody);
+      } catch {
+        providerResult = { message: responseBody.slice(0, 300) };
+      }
+      console.log("Brevo certificate email response", {
+        email: recipient.email,
+        status: response.status,
+        messageId: providerResult.messageId ?? providerResult.messageIds?.[0],
+        error: response.ok ? undefined : providerResult.message,
+      });
       return {
         ok: response.ok,
         email: recipient.email,
-        error: response.ok ? undefined : responseBody.slice(0, 300),
+        messageId: providerResult.messageId ?? providerResult.messageIds?.[0],
+        error: response.ok ? undefined : providerResult.message ?? responseBody.slice(0, 300),
       };
     })
   );
@@ -145,5 +158,9 @@ Deno.serve(async (request) => {
       sent: results.length - failed.length,
     }, 502);
   }
-  return json({ sent: results.length, team_id: team.id });
+  return json({
+    sent: results.length,
+    team_id: team.id,
+    message_ids: results.map((result) => result.messageId).filter(Boolean),
+  });
 });
