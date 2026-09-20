@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { PDFDocument, StandardFonts, rgb } from "https://esm.sh/pdf-lib@1.17.1";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -51,19 +52,23 @@ const toBase64 = (bytes: Uint8Array) => {
   return btoa(binary);
 };
 
-const createCertificateSvg = (template: Uint8Array, participantName: string) => {
-  const source = new TextDecoder().decode(template);
-  if (!source.trimStart().startsWith("<svg")) {
-    throw new Error("Certificate SVG template could not be parsed");
-  }
+const createCertificatePdf = async (template: Uint8Array, participantName: string) => {
   const name = participantName.trim();
-  const escapedName = escapeXml(name);
-  const overlay = `
-    <rect x="149" y="132" width="285" height="34" fill="white"/>
-    <text x="152" y="157" fill="#111827" font-family="Arial, Helvetica, sans-serif"
-      font-size="25" font-weight="700">${escapedName}</text>
-  `;
-  return source.replace("</svg>", `${overlay}</svg>`);
+  const pdf = await PDFDocument.create();
+  const image = await pdf.embedPng(template);
+  const page = pdf.addPage([566, 400]);
+  page.drawImage(image, { x: 0, y: 0, width: 566, height: 400 });
+  const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const fontSize = 25;
+  const textWidth = font.widthOfTextAtSize(name, 250);
+  page.drawText(name, {
+    x: 152,
+    y: 249,
+    size: textWidth > 250 ? (250 * fontSize) / textWidth : fontSize,
+    font,
+    color: rgb(0.07, 0.07, 0.07),
+  });
+  return pdf.save();
 };
 
 const json = (body: unknown, status = 200) =>
@@ -103,10 +108,10 @@ Deno.serve(async (request) => {
   if (!templateResponse.ok) return json({ error: "Certificate PDF template could not be loaded" }, 502);
   const template = new Uint8Array(await templateResponse.arrayBuffer());
   if (template.length === 0) return json({ error: "Certificate PDF template is empty" }, 500);
-  const header = new TextDecoder().decode(template.slice(0, 100)).trimStart();
-  if (!header.startsWith("<svg")) {
+  const header = Array.from(template.slice(0, 8));
+  if (header[0] !== 0x89 || header[1] !== 0x50 || header[2] !== 0x4e || header[3] !== 0x47) {
     return json({
-      error: "Certificate SVG URL did not return an SVG",
+      error: "Certificate background URL did not return a PNG",
       content_type: templateResponse.headers.get("content-type"),
     }, 502);
   }
@@ -121,7 +126,7 @@ Deno.serve(async (request) => {
 
   const results = await Promise.all(
     recipients.map(async (recipient) => {
-      const certificate = new TextEncoder().encode(createCertificateSvg(template, recipient.name));
+      const certificate = await createCertificatePdf(template, recipient.name);
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
@@ -135,7 +140,7 @@ Deno.serve(async (request) => {
           htmlContent: emailHtml(recipient.name),
           attachment: [
             {
-              name: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.svg`,
+              name: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.pdf`,
               content: toBase64(certificate),
             },
           ],
