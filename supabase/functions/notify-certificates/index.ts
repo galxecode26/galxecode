@@ -66,18 +66,26 @@ const createCertificatePdf = async (template: Uint8Array, participantName: strin
   const { width, height } = page.getSize();
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
   const name = participantName.trim();
-  const textWidth = font.widthOfTextAtSize(name, 24);
-  const fontSize = textWidth > width * 0.62 ? (width * 0.62 * 24) / textWidth : 24;
+  const templateNameFontSize = 25;
+  const nameArea = {
+    x: 149,
+    y: 236,
+    width: 250,
+    height: 34,
+  };
+  const textWidth = font.widthOfTextAtSize(name, templateNameFontSize);
+  const fontSize =
+    textWidth > nameArea.width
+      ? (nameArea.width * templateNameFontSize) / textWidth
+      : templateNameFontSize;
   page.drawRectangle({
-    x: width * 0.185,
-    y: height * 0.512,
-    width: width * 0.645,
-    height: height * 0.125,
+    ...nameArea,
     color: rgb(1, 1, 1),
+    opacity: 1,
   });
   page.drawText(name, {
-    x: width * 0.19,
-    y: height * 0.55,
+    x: 151.9,
+    y: 249.7,
     size: fontSize,
     font,
     color: rgb(0.07, 0.07, 0.07),
