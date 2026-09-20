@@ -119,7 +119,7 @@ Deno.serve(async (request) => {
           sender: { email: senderEmail, name: senderName },
           to: [{ email: recipient.email.trim().toLowerCase(), name: recipient.name }],
           subject,
-          html: emailHtml(recipient.name),
+          htmlContent: emailHtml(recipient.name),
           attachments: [
             {
               filename: `GALXECODE-26-Participation-Certificate-${recipient.name.replace(/[^a-z0-9]+/gi, "-")}.svg`,
