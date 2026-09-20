@@ -53,26 +53,28 @@ const toBase64 = (bytes: Uint8Array) => {
   return btoa(binary);
 };
 
-const createCertificatePdf = async (background: Uint8Array, participantName: string) => {
-  const pdf = await PDFDocument.create();
-  const page = pdf.addPage([566, 400]);
-  const image = await pdf.embedPng(background);
-  page.drawImage(image, { x: 0, y: 0, width: 566, height: 400 });
-
+const createCertificatePdf = async (template: Uint8Array, participantName: string) => {
+  const pdf = await PDFDocument.load(template);
+  const page = pdf.getPages()[0];
+  if (!page) throw new Error("Certificate PDF has no pages");
+  const { width, height } = page.getSize();
   const font = await pdf.embedFont(StandardFonts.HelveticaBold);
   const name = participantName.trim();
-  const fontSize = name.length > 28 ? 19 : 24;
-  const textWidth = font.widthOfTextAtSize(name, fontSize);
-  const width = Math.min(textWidth, 350);
-  page.drawRectangle({ x: 105, y: 205, width: 365, height: 50, color: rgb(1, 1, 1) });
+  const textWidth = font.widthOfTextAtSize(name, 24);
+  const fontSize = textWidth > width * 0.62 ? (width * 0.62 * 24) / textWidth : 24;
+  page.drawRectangle({
+    x: width * 0.185,
+    y: height * 0.512,
+    width: width * 0.645,
+    height: height * 0.125,
+    color: rgb(1, 1, 1),
+  });
   page.drawText(name, {
-    x: 107,
-    y: 220,
+    x: width * 0.19,
+    y: height * 0.55,
     size: fontSize,
-    maxWidth: 350,
     font,
     color: rgb(0.07, 0.07, 0.07),
-    characterSpacing: width < 350 ? 0 : -0.2,
   });
 
   return pdf.save();
@@ -112,7 +114,7 @@ Deno.serve(async (request) => {
   if (!team) return json({ error: "Team not found" }, 404);
 
   const templateResponse = await fetch(templateUrl);
-  if (!templateResponse.ok) return json({ error: "Certificate background could not be loaded" }, 502);
+  if (!templateResponse.ok) return json({ error: "Certificate PDF template could not be loaded" }, 502);
   const template = new Uint8Array(await templateResponse.arrayBuffer());
   if (template.length === 0) return json({ error: "Certificate background is empty" }, 500);
 
