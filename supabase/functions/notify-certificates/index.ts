@@ -116,7 +116,7 @@ Deno.serve(async (request) => {
   const templateResponse = await fetch(templateUrl);
   if (!templateResponse.ok) return json({ error: "Certificate PDF template could not be loaded" }, 502);
   const template = new Uint8Array(await templateResponse.arrayBuffer());
-  if (template.length === 0) return json({ error: "Certificate background is empty" }, 500);
+  if (template.length === 0) return json({ error: "Certificate PDF template is empty" }, 500);
 
   const recipients = [
     { name: team.leader_name, email: team.leader_email },
