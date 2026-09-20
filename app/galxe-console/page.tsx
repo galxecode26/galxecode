@@ -195,7 +195,30 @@ export default function ConsolePage() {
       const { data, error } = await supabase.functions.invoke("notify-certificates", {
         body: { team_id: team.id },
       });
-      if (error) throw error;
+      if (error) {
+        let providerMessage = error.message;
+        const response = "context" in error && error.context instanceof Response
+          ? error.context
+          : null;
+        if (response) {
+          const responseText = await response.text();
+          try {
+            const responseBody = JSON.parse(responseText) as {
+              error?: string;
+              details?: string[];
+            };
+            providerMessage = [
+              responseBody.error,
+              ...(responseBody.details ?? []),
+            ]
+              .filter(Boolean)
+              .join(": ") || providerMessage;
+          } catch {
+            if (responseText) providerMessage = responseText;
+          }
+        }
+        throw new Error(providerMessage);
+      }
       if (typeof data?.sent !== "number") {
         throw new Error(data?.error ?? "Certificate function returned an invalid response");
       }
