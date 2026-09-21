@@ -13,7 +13,7 @@ export default function PartnerAdminModal({ onClose, onPartnersUpdated }: Partne
   const [partners, setPartners] = useState<ConnectedPartner[]>(INITIAL_PARTNERS);
   const [editingPartner, setEditingPartner] = useState<ConnectedPartner | null>(null);
 
-  // Form states
+  
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [logoSrc, setLogoSrc] = useState("");

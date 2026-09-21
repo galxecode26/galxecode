@@ -54,24 +54,41 @@ const toBase64 = (bytes: Uint8Array) => {
 
 const createCertificatePdf = async (template: Uint8Array, participantName: string) => {
   const name = participantName.trim();
-  const pdf = await PDFDocument.create();
-  const image = await pdf.embedPng(template);
-  const page = pdf.addPage([566, 400]);
-  page.drawImage(image, { x: 0, y: 0, width: 566, height: 400 });
+  if (!name) throw new Error("Participant name is required");
+
+  const pdf = await PDFDocument.load(template);
+  const page = pdf.getPages()[0];
+  if (!page) throw new Error("Certificate PDF template has no pages");
+
+  const { width, height } = page.getSize();
+  const scale = width / 566;
+  const font = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+  const maxTextWidth = width * 0.62;
+  let fontSize = 32 * scale;
+  let textWidth = font.widthOfTextAtSize(name, fontSize);
+  if (textWidth > maxTextWidth) {
+    fontSize = (maxTextWidth * fontSize) / textWidth;
+    textWidth = font.widthOfTextAtSize(name, fontSize);
+  }
+
+  const textBoxX = (width - textWidth) / 2 - 10 * scale;
+  const textBoxY = height * 0.39 - 12 * scale;
+  const textBoxWidth = textWidth + 20 * scale;
+  const textBoxHeight = fontSize * 1.5;
+
   page.drawRectangle({
-    x: 145,
-    y: 236,
-    width: 320,
-    height: 42,
+    x: textBoxX,
+    y: textBoxY,
+    width: textBoxWidth,
+    height: textBoxHeight,
     color: rgb(1, 1, 1),
   });
-  const font = await pdf.embedFont(StandardFonts.HelveticaBold);
-  const fontSize = 25;
-  const textWidth = font.widthOfTextAtSize(name, fontSize);
+
   page.drawText(name, {
-    x: 152,
-    y: 249,
-    size: textWidth > 250 ? (250 * fontSize) / textWidth : fontSize,
+    x: (width - textWidth) / 2,
+    y: height * 0.39,
+    size: fontSize,
     font,
     color: rgb(0.07, 0.07, 0.07),
   });
@@ -115,10 +132,10 @@ Deno.serve(async (request) => {
   if (!templateResponse.ok) return json({ error: "Certificate PDF template could not be loaded" }, 502);
   const template = new Uint8Array(await templateResponse.arrayBuffer());
   if (template.length === 0) return json({ error: "Certificate PDF template is empty" }, 500);
-  const header = Array.from(template.slice(0, 8));
-  if (header[0] !== 0x89 || header[1] !== 0x50 || header[2] !== 0x4e || header[3] !== 0x47) {
+  const header = new TextDecoder().decode(template.slice(0, 5));
+  if (header !== "%PDF-") {
     return json({
-      error: "Certificate background URL did not return a PNG",
+      error: "Certificate template URL did not return a PDF",
       content_type: templateResponse.headers.get("content-type"),
     }, 502);
   }
